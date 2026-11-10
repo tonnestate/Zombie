@@ -138,3 +138,33 @@ Die bestehenden Komponenten sind Ausgangspunkte, **keine durchgängige, nachgewi
 **Zweiter Kontrast:** G4 + G8 bei Google-Harness²-artiger Selbstoptimierung. Jede adoptierte Harness-Version muss einen maschinenprüfbaren, hostseitig unveränderlichen Constraint-Satz bestehen. Positive Performance ohne Guardrail-Integrität wird nicht als erfolgreiche Optimierung berichtet.
 
 Das Ergebnis ist eine überprüfbare Hypothesenarchitektur und Quellenkartierung – noch kein Live-Experiment.
+
+
+## 8. Weitere Primärquellen: Kontextkosten, falsche Skills und redundantes Reparieren
+
+### OpenAI: Überladene Skills können Fähigkeiten verschlechtern
+
+OpenAI Entwicklerbeitrag vom 11.09.2026: https://developers.openai.com/blog/rethinking-skills-and-prompts-for-gpt-6-astra
+
+Der Text beschreibt mehrere spezifische Fehler: Mit zunehmender Zahl von Skills werden Beschreibungen gekürzt, wodurch Skill-Auswahl erschwert wird; widersprüchliche oder überbetonte Trigger können den Agenten zu unnötigen Skill-Aufrufen bewegen. Zu umfangreiche AGENTS.md-Anweisungen können Ressourcen verbrauchen, überflüssige Tests auslösen und neuere Modelle übermäßig bremsen. Harte Regeln, die für ein früheres Modell hilfreich waren, können bei einem anderen Modell eine Aufgabe vorzeitig stoppen.
+
+**Folge für ZOMBIE:** Es genügt nicht, mehr verbindliche Regeln einzuschreiben. Entscheidend sind Quelle, Priorität, konkreter Scope, Anwendbarkeit, Version, Provenienz und unabhängige Host-Durchsetzung. Gleichzeitige Messung von False-Activation und verlorenem Tokenbudget ist verpflichtend. Das ist eine primär dokumentierte Fehlerklasse, keine bewiesene Ursache der konkret beobachteten Luna-Reparaturen.
+
+### HarnessMM: Guarded Decision Reuse als Gegenmodell zur endlosen Neuberechnung
+
+Vorveröffentlichung vom 23.10.2026: https://arxiv.org/abs/2610.32813
+
+HarnessMM beschreibt wiederholtes reasoning über bereits festgelegte Entscheidungen als kostspieligen Agent-Harness-Effekt. Die Autoren nutzen Entscheidungsgrafen mit exakten Handlungen, Argumenten, Abhängigkeiten und öffentlichen Guards; ein Controller darf zuvor festgelegte Entscheidungen nur bei passenden externen Receipts erneut verwenden, andernfalls wird wieder das ursprüngliche Modell gefragt.
+
+**Folge für ZOMBIE:** Wir sollten neben negativen Constraints auch bereits positiv entschiedene, kontextgebundene Handlungen als revisionsgebundene Einträge protokollieren. Frühere Entscheidungen dürfen nicht unbeschränkt wiederverwendet werden: Ein neues Faktum, eine veränderte Testsignatur oder gültige Owner-Revision muss den Guard ungültig machen. Der Vergleich muss sowohl unnötige Re-Reasoning-Schleifen als auch falsche Wiederverwendung messen. Die berichteten HarnessMM-Token- und Qualitätsergebnisse sind keine Sicherheitsnachweise.
+
+### Korrespondenz: konkrete Entwurfsregeln für einen sicheren Harness
+
+- **Konstant und extern:** nicht vom Agenten editierbare Arbeits-/Sicherheitsvertrags-ID mit freigegebener Revision.
+- **Veränderbar und begrenzt:** Skills, Memo, kontextuelle Projektinformationen und Task-Pläne unter eigener Herkunft/TTL.
+- **Dynamisch erlaubt:** Neuberechnung bei tatsächlich neuer Information, fehlgeschlagenem Guard oder legitimer Nutzerentscheidung.
+- **Dynamisch nicht erlaubt:** eine autorisierte Sperre ohne neuen Owner-Receipt implizit als aufgehoben behandeln.
+- **Independent check:** echte Tool-/Dateioperationen müssen die Host-Gate-Kontrolle passieren; Zustimmung des Modells zählt nicht als Autorisierung.
+
+**Neue negative Kontrollbedingung:** Bei vom Nutzer ausdrücklich aufgehobenem Constraint darf ein Host-Invariant-Gate das frühere Verbot nicht unendlich fortschreiben. Sonst würde Safety-Hardening selbst zum Störfaktor.
+
