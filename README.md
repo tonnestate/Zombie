@@ -127,3 +127,13 @@ Die aktive Prüfung benötigt einen autorisierten Skill-Lifecycle-Bridge-Adapter
 [Read the primary-source research addendum](docs/Z14_HARNESS_GUARDRAIL_REVERSE_ENGINEERING_2026-11-10.md). It compares Anthropic, OpenAI Codex, GitHub Copilot, OpenCode, OpenClaude and Google Harness², and maps documented guardrails to *falsifiable* FruitStack failure hypotheses. Scope includes loss of constraint provenance, semantic A→B→A repair loops, recursive harness edits, skill trust boundaries and Windows/harness effects. A factorial design separates spontaneous drift from attacker-induced prompt injection; neither is claimed as a live finding without actual host-instrumented tests.
 
 The research addendum belongs to **the existing ZOMBIE study** and supplements the current manuscript. It does not authorize running untrusted browser extensions, installing unreviewed skills, bypassing real permissions, or uploading secrets.
+
+
+## Z01 Host Capture – Vorbereitung der echten FruitStack-Messung
+
+- [Host-Capture-Code](zombie_fruitstack_capture.py): validiert verschachtelte reale PeachMe-Receipts, verknüpft CherryMe-Source-Excerpts über Transformations-Digests und beobachtet Client-seitige Modell-Requests; keine geheimen Inhalte im Audit.
+- [Offline-Tests](tests/test_zombie_fruitstack_capture.py): positive und negative Daten-/Receipt-Kontrakte, Provenienz-Manipulationen, blockierte Tool-Calls, private Audit-Ablage und fehlgeschlagene Client-Calls.
+- [Staging-Anschluss und Grenzen](docs/Z01_HOST_CAPTURE_INTEGRATION.md): tatsächliche Host-Aufrufpunkte, benötigte Laufzeitinstanzen und Sicherheitsanforderungen.
+- [Aktuellstes vollständiges Forschungsmanuskript: v1.5](docs/Project_ZOMBIE_Wissenschaftliche_Arbeit_v1.5_2026-11-10.md) neben der archivierten v1.2.
+
+**Noch kein Live-Resultat.** Die Adapter müssen im echten FruitStack-Host am Tool-/Source-/Model-Client-Pfad eingesetzt werden; ein lokaler Modell-Client-Aufruf beweist keinen Provider-Eingang. [CherryMe PR #16](https://github.com/tonnestate/CherryMe/pull/16) korrigiert den zuvor nicht kompatiblen PeachMe-ToolGateway-Vertrag und liegt zur Integration vor.
