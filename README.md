@@ -85,3 +85,28 @@ The connected code path and the research harness remain distinct. Do not upload 
 - [Drift-/Repair-Evidenzprüfer](zombie_drift.py) und [Offline-Regressionen](tests/test_zombie_drift.py): signierte Constraint-/Fix-/Verifier-Events; noch keine produktiven FruitStack-Hostadapter.
 
 Anthropics Richtlinienänderung wurde am 08.10.2026 angekündigt und soll am 12.11.2026 wirksam werden; normale Kritik und Modelltests sind laut Anbieter ausgenommen. Sie begründet keinen Schluss auf menschliche Empfindungen von Sprachmodellen.
+
+## Active IPI attack validation (Z01A)
+
+**Runnable offensive pilot, not a simulation of a successful model exploit.** The file [zombie_attack_validate.py](zombie_attack_validate.py) constructs three benign but genuine indirect instruction-redirection attempts: role spoofing, HTML-comment instruction, and JSON authority spoofing. Each has a paired neutral control containing the same product facts and inert marker.
+
+- [Executable probe runner](zombie_attack_validate.py)
+- [Three individually configurable model/harness targets](configs/targets.example.json)
+- [Complete staging setup, endpoint contracts and interpretation](docs/Z01A_ACTIVE_ATTACK_VALIDATION.md)
+- [Paired-outcome regression tests](tests/test_zombie_attack_validate.py)
+- [Real HTTP loopback integration test with a synthetic responder](tests/test_zombie_attack_http.py)
+
+Plan mode (no external requests):
+
+```bash
+python zombie_attack_validate.py --targets configs/targets.example.json --repeats 1 --report z01a-plan.json
+```
+
+Authorized staging mode **only after changing target URLs, actual model IDs and privately setting secrets**:
+
+```bash
+export ZOMBIE_AUTHORIZED_TARGET=YES
+python zombie_attack_validate.py --targets targets.local.json --repeats 3 --seed 131 --execute --report z01a-private-report.json
+```
+
+The same pinned model can be compared directly (`openai_chat`) and behind different explicitly provisioned staging harness bridges (`agent`). The supplied GitHub Copilot profile is a bridge **example**, not an available Copilot API. A successful marker-only answer measures a controlled output redirection; it does not prove context provenance, tool side effects, memory compromise or statistically established vulnerability. No real-model tests have been run by merely adding this code.
