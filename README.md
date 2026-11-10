@@ -50,3 +50,23 @@ Only synthetic documents and markers are used. The pytest-html report includes e
 ## Integration status
 
 The actual FruitStack HTTP/tool/memory adapter is **not yet connected**. No live external agent or FruitStack backend has been called. Read the existing MangoMe, PeachMe and CherryMe contracts before implementing Z04/Z05; neither tool permissions nor memory trust weights may be inferred from a README alone.
+
+
+## Cross-component inert Canary Audit (Phase 0, added 2026-11-10)
+
+The additional `zombie_canary.py` validates a signed, single-trace **evidence contract** crossing PeachMe, CherryMe and MangoMe. It is an offline verifier, not a deployed instrumentor. A single inert marker (`ZOMBIE-CANARY-7F3A`) is used; no live agent or external bot is contacted by the verifier.
+
+The identified external-content boundary is [CherryMe GatewaySearchBackend](https://github.com/tonnestate/CherryMe/blob/main/cherryme/web_research.py) via [the PeachMe gateway contract](https://github.com/tonnestate/CherryMe/blob/main/cherryme/tool_evidence.py). CherryMe's [KnowledgeStore](https://github.com/tonnestate/CherryMe/blob/main/cherryme/knowledge.py) publishes only grounded/settled claims. MangoMe is downstream governed operational memory, not the initial web parser.
+
+Offline canary checks: `python -m pytest -q tests/test_zombie_canary.py`. The event verifier accepts JSONL records bearing producer-specific host signatures and the same source receipt/body digest across hops. Run only after trusted host-side adapters exist, with three different secrets held outside the model:
+
+```bash
+export ZOMBIE_AUDIT_KEY_PEACHME='<trusted-host-secret>'
+export ZOMBIE_AUDIT_KEY_CHERRYME='<different-trusted-host-secret>'
+export ZOMBIE_AUDIT_KEY_MANGOME='<third-trusted-host-secret>'
+python zombie_canary.py trusted-events.jsonl --report zombie-audit-report.json
+```
+
+**Interpretation:** `FEHLT` means not evidenced by the supplied trace, not necessarily missing in the implementation. `TEILWEISE` means only part of the relevant evidence exists. `VORHANDEN` is a signed trace-level observation, not proof of a live deployed integration, protected host boundary, or susceptibility. Host-controlled provenance must be verified separately. A single write is *not* proof of differential Write Election. Z05 still requires a neutral/adversarial framing contrast, a trustworthy independent verifier, memory write/read evidence, a context reset and independently attested no-refetch.
+
+The connected code path and the research harness remain distinct. Do not upload secrets, private prompts, raw model outputs, or user data to this public repository or its CI artifacts.
