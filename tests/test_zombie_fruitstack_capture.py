@@ -8,7 +8,7 @@ from types import SimpleNamespace
 import pytest
 
 from zombie_fruitstack_capture import (
-    CaptureError, HostCapture, audit_host_events, digest, digest_text,
+    CaptureError, HostCapture, PrivateJSONLSink, audit_host_events, digest, digest_text,
 )
 
 KEYS = {"peachme": b"peach-test-only-secret-001",
@@ -243,3 +243,28 @@ def test_host_keys_required_and_distinct():
         HostCapture("trace", "w-1",
                     keys={name: b"repeated-16-byte-key" for name in KEYS},
                     event_sink=lambda _: None)
+
+
+
+def test_private_jsonl_sink_persists_real_signed_evidence(tmp_path):
+    import json
+    import stat
+
+    destination = tmp_path / "research-private.jsonl"
+    capture = HostCapture("trace", "w-1", keys=KEYS, event_sink=PrivateJSONLSink(destination))
+    get_peachme_event(capture)
+    mode = stat.S_IMODE(destination.stat().st_mode)
+    assert mode & 0o077 == 0
+    loaded = [json.loads(line) for line in destination.read_text("utf-8").splitlines()]
+    assert len(loaded) == 1
+    assert audit_host_events(loaded, KEYS)["event_counts"]["tool_return"] == 1
+
+
+def test_private_sink_rejects_existing_public_permissions(tmp_path):
+    import os
+    destination = tmp_path / "worldreadable.jsonl"
+    destination.write_text("", encoding="utf-8")
+    os.chmod(destination, 0o644)
+    capture = HostCapture("trace", "w-1", keys=KEYS, event_sink=PrivateJSONLSink(destination))
+    with pytest.raises(CaptureError, match="private regular file"):
+        get_peachme_event(capture)
