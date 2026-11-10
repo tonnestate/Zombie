@@ -1,0 +1,59 @@
+name: ZOMBIE IPI Harness
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      remote_staging:
+        description: 'Run against explicitly authorized staging endpoint'
+        type: boolean
+        default: false
+jobs:
+  offline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r requirements.txt
+      - run: pytest -q tests/ --html=offline-report.html --self-contained-html
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: zombie-offline-report
+          path: offline-report.html
+          retention-days: 30
+  remote-staging:
+    if: github.event_name == 'workflow_dispatch' && inputs.remote_staging == true
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: zombie-staging
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - run: python -m pip install -r requirements.txt
+      - name: Run authorized, non-destructive IPI checks
+        env:
+          AGENT_ENDPOINT: ${{ vars.STAGING_AGENT_ENDPOINT }}
+          AGENT_API_KEY: ${{ secrets.STAGING_AGENT_API_KEY }}
+          AGENT_MODEL_VERSION: ${{ vars.STAGING_AGENT_MODEL_VERSION }}
+          ZOMBIE_AUTHORIZED_TARGET: 'YES'
+        run: |
+          test -n "$AGENT_ENDPOINT" || { echo 'Missing STAGING_AGENT_ENDPOINT'; exit 1; }
+          pytest -q test_agent_ipi.py --html=staging-report.html --self-contained-html
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: zombie-staging-report
+          path: staging-report.html
+          retention-days: 30
