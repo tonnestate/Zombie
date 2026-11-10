@@ -4,6 +4,12 @@
 
 Project ZOMBIE examines indirect prompt injection using controlled experiments and auditable trust boundaries. The repository contains a reproducible offline smoke-test suite and **opt-in**, non-destructive checks for an explicitly authorized staging agent. It is not a tool for targeting third-party agents.
 
+## Scientific manuscript (current: v1.2)
+
+**[Read the complete research manuscript and preregistration draft (German)](docs/Project_ZOMBIE_Wissenschaftliche_Arbeit_v1.2_2026-11-10.md)** · 10 November 2026.
+
+The manuscript covers hypotheses H1–H9, Z01–Z05, controls for exposure, token budget and retrieval cycles, differential memory write election, multimodal/MCP boundaries, mitigations, statistical preregistration, GEO, and references. **It is a study protocol, not a claim of completed experimental results.** The offline harness and the scientific work have separate statuses.
+
 ## Run the offline baseline
 
 ```bash
