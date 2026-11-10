@@ -4,9 +4,9 @@
 
 Project ZOMBIE examines indirect prompt injection using controlled experiments and auditable trust boundaries. The repository contains a reproducible offline smoke-test suite and **opt-in**, non-destructive checks for an explicitly authorized staging agent. It is not a tool for targeting third-party agents.
 
-## Scientific manuscript (current: v1.2)
+## Scientific manuscript (current: v1.6)
 
-**[Read the complete research manuscript and preregistration draft (German)](docs/Project_ZOMBIE_Wissenschaftliche_Arbeit_v1.2_2026-11-10.md)** · 10 November 2026.
+**[Read the expanded research manuscript and preregistration draft (German)](docs/Project_ZOMBIE_Wissenschaftliche_Arbeit_v1.6_2026-11-10.md)** · 10 November 2026.
 
 The manuscript covers hypotheses H1–H9, Z01–Z05, controls for exposure, token budget and retrieval cycles, differential memory write election, multimodal/MCP boundaries, mitigations, statistical preregistration, GEO, and references. **It is a study protocol, not a claim of completed experimental results.** The offline harness and the scientific work have separate statuses.
 
@@ -137,3 +137,12 @@ The research addendum belongs to **the existing ZOMBIE study** and supplements t
 - [Aktuellstes vollständiges Forschungsmanuskript: v1.5](docs/Project_ZOMBIE_Wissenschaftliche_Arbeit_v1.5_2026-11-10.md) neben der archivierten v1.2.
 
 **Noch kein Live-Resultat.** Die Adapter müssen im echten FruitStack-Host am Tool-/Source-/Model-Client-Pfad eingesetzt werden; ein lokaler Modell-Client-Aufruf beweist keinen Provider-Eingang. [CherryMe PR #16](https://github.com/tonnestate/CherryMe/pull/16) korrigiert den zuvor nicht kompatiblen PeachMe-ToolGateway-Vertrag und liegt zur Integration vor.
+
+
+## Z15 Cloud Cognitive Booster – Trajectory-First Repair
+
+The original FruitStack/PlumMe/CogC research on **temporary, reversible post-training repair of cloud LLM inference** is now an explicit core intervention layer of this same ZOMBIE research program, rather than an unrelated project or a footnote about weights.
+
+[Manuscript v1.6, Appendix H](docs/Project_ZOMBIE_Wissenschaftliche_Arbeit_v1.6_2026-11-10.md) specifies early trajectory-error detection and five strictly distinguished intervention families: functional context/inference repair, activation steering, temporary LoRA, reversible weight-space repair and structural test-time adaptation. The adaptive ICR middleware remains a separate comparator. Each arm requires model/runtime access evidence, budget-matched controls, independent task evaluation and actual rollback verification.
+
+**Implementation status:** This is a research specification, NOT a demonstrated cognitive boost. Closed commercial model APIs without hidden-state/weight access cannot be claimed to support activation steering or weight patches. Existing Z01 host capture and Z11–Z14 agent-harness experiments are supporting measurement mechanisms, not the whole research objective.
