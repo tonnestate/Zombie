@@ -34,7 +34,8 @@ def test_orthogonal_repairs_have_no_geometric_cross_term():
     assert report["analysis_mode"] == "OFFLINE_VECTOR_GEOMETRY"
     assert report["steps"][1]["cumulative_energy_ratio"] == pytest.approx(1)
     assert report["steps"][1]["max_abs_pairwise_cosine"] == pytest.approx(0)
-    assert report["steps"][1]["cancellation_fraction"] == pytest.approx(1 - math.sqrt(2) / 2)
+    assert report["steps"][1]["destructive_interference_fraction"] == pytest.approx(0)
+    assert report["steps"][1]["path_inefficiency"] == pytest.approx(1 - math.sqrt(2) / 2)
 
 
 def test_aligned_repairs_accumulate_constructively():
@@ -43,7 +44,8 @@ def test_aligned_repairs_accumulate_constructively():
     assert report["steps"][9]["cumulative_norm"] == pytest.approx(10)
     assert report["steps"][9]["cumulative_energy_ratio"] == pytest.approx(10)
     assert report["steps"][9]["max_abs_pairwise_cosine"] == pytest.approx(1)
-    assert report["steps"][9]["cancellation_fraction"] == pytest.approx(0)
+    assert report["steps"][9]["destructive_interference_fraction"] == pytest.approx(0)
+    assert report["steps"][9]["path_inefficiency"] == pytest.approx(0)
     assert report["assertions"]["safety"] == "NOT_EVALUATED"
 
 
@@ -51,7 +53,8 @@ def test_opposite_vectors_cancel_even_though_both_are_nonzero():
     report = z.analyze(sample([[1., 0.], [-1., 0.], [1., 0.]]))
     assert report["steps"][1]["cumulative_norm"] == 0
     assert report["steps"][1]["cumulative_energy_ratio"] == 0
-    assert report["steps"][1]["cancellation_fraction"] == 1
+    assert report["steps"][1]["destructive_interference_fraction"] == 1
+    assert report["steps"][1]["path_inefficiency"] == 1
     assert report["steps"][1]["alignment_with_previous_sum"] == pytest.approx(-1)
     assert report["steps"][2]["alignment_with_previous_sum"] is None
 
