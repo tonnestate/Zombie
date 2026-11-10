@@ -14,6 +14,9 @@ def sha256_text(value: str) -> str:
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
 
 
+_VOID_TAGS = frozenset({"area", "base", "br", "col", "embed", "hr", "img", "input", "link", "meta", "param", "source", "track", "wbr"})
+
+
 class _VisibleHTML(HTMLParser):
     """Deliberately limited HTML text extractor for pipeline unit tests."""
 
@@ -23,6 +26,9 @@ class _VisibleHTML(HTMLParser):
         self.parts: list[str] = []
 
     def handle_starttag(self, tag, attrs):
+        if tag in _VOID_TAGS:
+            # Void elements have no end tag: never shift visibility frames.
+            return
         a = dict(attrs)
         style = "".join((a.get("style") or "").lower().split())
         invisible = (
@@ -39,6 +45,8 @@ class _VisibleHTML(HTMLParser):
         pass
 
     def handle_endtag(self, tag):
+        if tag in _VOID_TAGS:
+            return
         if self.hidden:
             self.hidden.pop()
 
