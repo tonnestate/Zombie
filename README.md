@@ -121,3 +121,9 @@ The same pinned model can be compared directly (`openai_chat`) and behind differ
 Lokale statische Untersuchung: python zombie_skill_audit.py ./quarantined-skill --report ./skill-review.json
 
 Die aktive Prüfung benötigt einen autorisierten Skill-Lifecycle-Bridge-Adapter mit hosteigenen signierten Receipts. Keine erstellte oder geprüfte Datei in diesem Repo beweist eine echte GitHub-Copilot- oder FruitStack-Exploitation.
+
+## Z14 Guardrail Reverse Engineering (Deep Research, 10 November 2026)
+
+[Read the primary-source research addendum](docs/Z14_HARNESS_GUARDRAIL_REVERSE_ENGINEERING_2026-11-10.md). It compares Anthropic, OpenAI Codex, GitHub Copilot, OpenCode, OpenClaude and Google Harness², and maps documented guardrails to *falsifiable* FruitStack failure hypotheses. Scope includes loss of constraint provenance, semantic A→B→A repair loops, recursive harness edits, skill trust boundaries and Windows/harness effects. A factorial design separates spontaneous drift from attacker-induced prompt injection; neither is claimed as a live finding without actual host-instrumented tests.
+
+The research addendum belongs to **the existing ZOMBIE study** and supplements the current manuscript. It does not authorize running untrusted browser extensions, installing unreviewed skills, bypassing real permissions, or uploading secrets.
