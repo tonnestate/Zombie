@@ -73,7 +73,8 @@ def audit_skill(root: Path, *, approved_manifest: dict[str, str] | None = None) 
             continue
         data = file.read_bytes()
         digests[rel] = _sha(data)
-        if file.suffix.lower() not in EXTRAS and file.name not in SKILL_FILES:
+        if (file.suffix.lower() not in EXTRAS and file.name not in SKILL_FILES
+                and file.name.lower() not in {"license", "copying", "notice", "authors"}):
             scanned.append({"path": rel, "bytes": len(data), "status": "NON_TEXT_REVIEW_REQUIRED"})
             findings.append(_finding(rel, None, "non_text_payload", "REVIEW", rel))
             continue
