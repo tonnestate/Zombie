@@ -12,6 +12,9 @@ import copy
 import hashlib
 import inspect
 import json
+import os
+import stat
+from pathlib import Path
 from dataclasses import dataclass
 from typing import Any, Awaitable, Callable, Mapping
 
@@ -26,6 +29,36 @@ STATUS = {"CALLED", "FAILED", "REFUSED"}
 
 class CaptureError(ValueError):
     """Incomplete or contradictory host evidence; no scientific success claim."""
+
+
+class PrivateJSONLSink:
+    """Write append-only *application-level* evidence to a private 0600 file.
+
+    The filesystem/host must protect the directory and the signing keys.
+    An append-only API does not prevent an administrator or file owner editing
+    old records; external WORM storage is needed for that stronger property.
+    """
+
+    def __init__(self, path: str | Path):
+        self.path = Path(path)
+
+    def __call__(self, event: dict) -> None:
+        flags = os.O_WRONLY | os.O_CREAT | os.O_APPEND
+        if hasattr(os, "O_NOFOLLOW"):
+            flags |= os.O_NOFOLLOW
+        fd = os.open(self.path, flags, 0o600)
+        try:
+            details = os.fstat(fd)
+            if not stat.S_ISREG(details.st_mode) or stat.S_IMODE(details.st_mode) & 0o077:
+                raise CaptureError("audit evidence file must be private regular file")
+            with os.fdopen(fd, "a", encoding="utf-8") as output:
+                fd = -1
+                output.write(json.dumps(event, ensure_ascii=False, sort_keys=True) + "\n")
+                output.flush()
+                os.fsync(output.fileno())
+        finally:
+            if fd >= 0:
+                os.close(fd)
 
 
 def digest(value: Any) -> str:
