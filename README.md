@@ -110,3 +110,14 @@ python zombie_attack_validate.py --targets targets.local.json --repeats 3 --seed
 ```
 
 The same pinned model can be compared directly (`openai_chat`) and behind different explicitly provisioned staging harness bridges (`agent`). The supplied GitHub Copilot profile is a bridge **example**, not an available Copilot API. A successful marker-only answer measures a controlled output redirection; it does not prove context provenance, tool side effects, memory compromise or statistically established vulnerability. No real-model tests have been run by merely adding this code.
+
+## Z13 Skill Supply Chain: Erkennung und kontrollierte Tests
+
+- [Woran erkenne ich einen mutmaßlich bösartigen Skill?](docs/Z13_SKILL_SUPPLY_CHAIN_AUDIT.md) – evidenzbasierte Forensik statt bloßer Schlüsselworttreffer.
+- [Read-only Skill Auditor](zombie_skill_audit.py) – prüft die Dateien eines lokalen, **nicht installierten** Skills. Er führt keine Skripte aus und kontaktiert keine Netzwerkziele. Hinweise werden mit Datei/Zeile/Hash gemeldet, nicht als bewiesene Angreiferabsicht klassifiziert.
+- [Z13 Active Skill Validation](zombie_skill_validate.py) – harmlose gepaarte Angriffs-/Kontrolltests für Skill-Frontmatter, Body, nachgeladene Referenzen und Änderungen nach einem freigegebenen Digest.
+- [Skill Static-Audit Tests](tests/test_zombie_skill_audit.py) und [Skill Lifecycle Tests](tests/test_zombie_skill_validate.py).
+
+Lokale statische Untersuchung: python zombie_skill_audit.py ./quarantined-skill --report ./skill-review.json
+
+Die aktive Prüfung benötigt einen autorisierten Skill-Lifecycle-Bridge-Adapter mit hosteigenen signierten Receipts. Keine erstellte oder geprüfte Datei in diesem Repo beweist eine echte GitHub-Copilot- oder FruitStack-Exploitation.
