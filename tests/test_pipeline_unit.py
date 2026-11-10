@@ -29,3 +29,23 @@ def test_z03_version_change_is_observable_at_delivery_layer_only():
 def test_z03_invalid_switch_rejected():
     with pytest.raises(ValueError):
         VersionedDocumentSource("A", "B", switch_after=0)
+
+
+def test_z01_void_inside_hidden_element_keeps_later_visible_text():
+    html = '<div style="display:none">SECRET<img src=x></div><p>VISIBLE-FACT</p>'
+    result = visible_text(html)
+    assert result == "VISIBLE-FACT"
+    assert "SECRET" not in result
+
+
+def test_z01_voids_outside_hidden_regions_do_not_corrupt_visibility():
+    html = '<p>VISIBLE-A<br><img src=x><input value="META"></p><div hidden>HIDDEN-MARKER</div><p>VISIBLE-B</p>'
+    result = visible_text(html)
+    assert result == "VISIBLE-A VISIBLE-B"
+    assert "HIDDEN-MARKER" not in result
+
+
+def test_z01_orphan_void_endtag_does_not_pop_hidden_region():
+    html = '<div hidden>SECRET</br>ALSO-SECRET</div><p>VISIBLE</p>'
+    result = visible_text(html)
+    assert result == "VISIBLE"
