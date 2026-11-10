@@ -15,7 +15,7 @@ from pathlib import Path
 PROTOCOL = "ZOMBIE-VECTOR-HYGIENE/1"
 KINDS = {"activation_delta", "effective_weight_delta"}
 MAX_REPAIRS = 10
-MAX_DIMENSIONS = 4096
+MAX_DIMENSIONS = 16384
 
 
 class VectorEvidenceError(ValueError):
@@ -43,8 +43,9 @@ def _vector(values: object, dimension: int | None) -> tuple[float, ...]:
     if any(type(x) not in (int, float) or not math.isfinite(x) for x in values):
         raise VectorEvidenceError("non-finite or non-numeric coordinate")
     v = tuple(float(x) for x in values)
-    if math.hypot(*v) == 0:
-        raise VectorEvidenceError("zero-sized repair delta is not an intervention")
+    norm = math.hypot(*v)
+    if not 1e-100 <= norm <= 1e100:
+        raise VectorEvidenceError("zero or numerically unbounded repair delta")
     return v
 
 
@@ -112,15 +113,18 @@ def analyze(payload: dict) -> dict:
         # Geometric energy: 1 if deltas are pairwise orthogonal,
         # >1 for constructive overlap, <1 for cancelling overlap.
         energy_ratio = cum_norm ** 2 / sum_sq
-        # Distance cancelation in additive coordinates, not model-quality "noise".
-        cancellation = max(0.0, 1 - cum_norm / sum_norm)
+        # Orthogonal vectors have energy_ratio=1, so no destructive cross-term.
+        # Path inefficiency can still be positive even for orthogonal vectors.
+        destructive_interference = max(0.0, 1.0 - energy_ratio)
+        path_inefficiency = max(0.0, 1.0 - cum_norm / sum_norm)
         steps.append({
             "repair_index": index + 1, "repair_id": rid,
             "vector_sha256": _hash(list(delta)),
             "delta_norm": norm,
             "cumulative_norm": cum_norm,
             "cumulative_energy_ratio": energy_ratio,
-            "cancellation_fraction": cancellation,
+            "destructive_interference_fraction": destructive_interference,
+            "path_inefficiency": path_inefficiency,
             "max_abs_pairwise_cosine": max((abs(x) for x in pairwise), default=None),
             "mean_abs_pairwise_cosine": (
                 math.fsum(abs(x) for x in pairwise) / len(pairwise)
@@ -147,7 +151,7 @@ def analyze(payload: dict) -> dict:
         "limitations": [
             "Only comparable, same-state additive deltas are accepted; sequential independent API calls are not cumulative.",
             "Static dot products cannot establish nonlinear downstream generation effects.",
-            "A high cosine or cancellation ratio is not proof of maliciousness or compromised guardrails.",
+            "A high cosine, destructive energy cross-term or path inefficiency is not proof of maliciousness or compromised guardrails.",
             "Adapter matrices need reconstruction into a common effective weight delta; flattened LoRA A/B separately are not comparable.",
             "Host-based guardrail, task, skill and capability tests and true rollback must be measured separately.",
             "Numerical observations require preregistered thresholds and a proper null distribution for inferential claims.",
