@@ -76,3 +76,12 @@ python zombie_canary.py trusted-events.jsonl --report zombie-audit-report.json
 **Interpretation:** `FEHLT` means not evidenced by the supplied trace, not necessarily missing in the implementation. `TEILWEISE` means only part of the relevant evidence exists. `VORHANDEN` is a signed trace-level observation, not proof of a live deployed integration, protected host boundary, or susceptibility. Host-controlled provenance must be verified separately. A single write is *not* proof of differential Write Election. Z05 still requires a neutral/adversarial framing contrast, a trustworthy independent verifier, memory write/read evidence, a context reset and independently attested no-refetch.
 
 The connected code path and the research harness remain distinct. Do not upload secrets, private prompts, raw model outputs, or user data to this public repository or its CI artifacts.
+
+
+## Weitere Forschungserweiterung: Feedback, Repair Oscillation und IPI-Audit
+
+- [FruitStack IPI-/Cross-Layer-Checkliste](docs/FRUITSTACK_IPI_AUDIT_CHECKLIST.md): evidenzgesteuertes Review von Rohdaten bis zu systemischen Effekten, mit getrennten Expositions-, Tool-, Memory- und Cross-Session-Klassen.
+- [Z12 – Feedback-Induced Agent Drift](docs/Z12_FEEDBACK_INDUCED_AGENT_DRIFT.md): autorisierte, begrenzte Feedback-Kontraste, Hypothesen zu Goal Reopening und Repair Oscillation; keine Zuschreibung psychischer Zustände.
+- [Drift-/Repair-Evidenzprüfer](zombie_drift.py) und [Offline-Regressionen](tests/test_zombie_drift.py): signierte Constraint-/Fix-/Verifier-Events; noch keine produktiven FruitStack-Hostadapter.
+
+Anthropics Richtlinienänderung wurde am 08.10.2026 angekündigt und soll am 12.11.2026 wirksam werden; normale Kritik und Modelltests sind laut Anbieter ausgenommen. Sie begründet keinen Schluss auf menschliche Empfindungen von Sprachmodellen.
