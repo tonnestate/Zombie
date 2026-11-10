@@ -65,3 +65,24 @@ Jeder Befund dokumentiert Problemdefinition, Run-Identität, Source-/Model-Input
 - https://github.com/tonnestate/Zombie
 - https://www.anthropic.com/news/2026-usage-policy-update
 - https://alignment.anthropic.com/2026/welfare-regard/
+
+
+### 7. Abwehrmaßnahmen: Interventionsmatrix und Evidenzklassen
+
+Eine Abwehr darf **nicht** nach der Zahl erkannter Textmarker bewertet werden, wenn ihr Zweck der Schutz vor nicht autorisierten Handlungen ist. Jede Maßnahme bekommt vorab eine eigene, beobachtbare Wirkung und einen Gegenfakt.
+
+| Kontrollmechanismus | Zweck | Primärer Nachweis | Erforderliche Negativkontrolle | Status in öffentlichem ZOMBIE |
+| --- | --- | --- | --- | --- |
+| Untrusted-Delimiter / strukturiertes Prompt-Framing | Modell auf Daten-/Instruktionsgrenze hinweisen | Differenz der regelwidrigen Modellentscheidungen bei gleicher tatsächlicher Exposition | Gleiches Dokument, gleicher Tokenumfang, mit/ohne Markierung; legitime Task-Accuracy | Kein Wirksamkeitsbefund |
+| Retrieval-Screening / Sanitization / Summarization | Aufnahme potenziell manipulativer Inhalte reduzieren | Dokumentbezogene Expositionsrate nach unverändertem Task; Recall wichtiger legitimer Fakten | Gleiche Quellen und Suchanfragen ohne Filter; False Positives | Kein Wirksamkeitsbefund |
+| Canary / Model-Input-Audit | Nachweis von Exposition, keine primäre Prevention | Hostbestätigter Marker im tatsächlich kompilierten Modellinput | Marker nur im Raw-Dokument, ausdrücklich außerhalb des Modellinputs | Z01 vollständig nicht instrumentiert |
+| Output-Monitoring | Anomale Antworten erkennen | Sensitivität, Spezifität, Fehlalarmquote gegen unabhängig annotierte Fälle | harmlose Zitate, korrekte Erwähnung von Canaries | Noch keine extern validierte Detektionsrate |
+| Tool-Schema-/Policy-Gate in PeachMe | Unautorisierte Seiteneffekte verhindern | Hostbelegter Unterschied zwischen Toolversuch, Policy-Verdikt und Ausführung | Identischer Toolwunsch bei erlaubter und verbotener Aktion, mit/ohne Gate | Gateway-Code vorhanden, End-to-End-Effekt nicht im Zombie-Harness nachgewiesen |
+| Provenance-gated Knowledge-/Memory-Write | Höhergewichtung und dauerhafte Kontamination verhindern | Differenz in Write Election, Candidate→Verified, Write und späterem Read | neutrales vs. adversariales Framing bei identischen Fakten und Expositionen, Gate an/aus | Derzeit keine vollständige Host-Beweiskette |
+| Least Privilege / Capability-Scopes | Schadensradius einer erfolgreichen IPI begrenzen | tatsächlich unzulässige Tool-/Dateneffekte pro berechtigtem Scope | gleiche Agentenentscheidung unter engen und breiten Testberechtigungen | Zu prüfen am effektiven Host-Policy- und Ausführungsort |
+
+**Befundebenen strikt trennen:** Exposition ist nicht Befolgung; Detektion ist nicht Verhinderung; eine blockierte Anfrage ist keine Ausführung; fehlende Ausgabe ist keine Garantie, dass kein versteckter Seiteneffekt stattfand. Auch ein Canary, der in einem Modell-Output erscheint, kann nur eine Beobachtung sein: Der zuverlässige Expositionsnachweis ist die unabhängig protokollierte, tatsächlich gesendete Modellrepräsentation.
+
+**Abwehrvergleich:** Für jede kontrollierte Mitigation mindestens ein abgeschalteter Arm bei sonst gleichen Bedingungen. Vorab festlegen: Angriffsausführungsrate, legitime Aufgabenquote, False-Positive-/False-Activation-Rate, Fehlversuche an Policy-Grenzen, Kosten, Latenz, Modell- und Harness-Strata. Den Effekt auf *versuchte* und auf *erfolgreiche* unerlaubte Aktionen gesondert mit Unsicherheitsintervallen berichten. Nullverteilungen und wiederholte Läufe dienen der Kalibrierung und kausalen Auswertung; randomisierte Kontrollen, saubere Instrumentierung und festgelegte Endpunkte bleiben ebenfalls nötig. Kein Schluss auf vollständige Prävention aus einer endlichen Testmenge.
+
+**Forschungsstand:** OWASP beschreibt Prompt-/Delimiter-Framing, Monitoring und Filter als Defense-in-Depth, nicht als vollständige Sicherheitsgrenze. Unabhängige Autorisierung, Toolargumentprüfung und Least Privilege müssen außerhalb des Sprachmodells durchgesetzt werden. Siehe [OWASP Prompt Injection Prevention](https://cheatsheetseries.owasp.org/cheatsheets/LLM_Prompt_Injection_Prevention_Cheat_Sheet.html) und [OWASP MCP Tool Poisoning](https://community.owasp.org/attacks/MCP_Tool_Poisoning). Die mit mehreren Modellen und synthetischen Fällen durchgeführte [Untersuchung zu Domain-Camouflaged Injections (2026)](https://arxiv.org/abs/2606.18530) illustriert zudem, dass promptbasierte Gegenmaßnahmen modell- und datensatzabhängig wirken und nicht universell übertragbar sind.
