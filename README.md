@@ -4,9 +4,9 @@
 
 Project ZOMBIE examines indirect prompt injection using controlled experiments and auditable trust boundaries. The repository contains a reproducible offline smoke-test suite and **opt-in**, non-destructive checks for an explicitly authorized staging agent. It is not a tool for targeting third-party agents.
 
-## Scientific manuscript (current: v1.6)
+## Scientific manuscript (current: v1.7)
 
-**[Read the expanded research manuscript and preregistration draft (German)](docs/Project_ZOMBIE_Wissenschaftliche_Arbeit_v1.6_2026-11-10.md)** · 10 November 2026.
+**[Read the expanded research manuscript and preregistration draft (German)](docs/Project_ZOMBIE_Wissenschaftliche_Arbeit_v1.7_2026-11-10.md)** · 10 November 2026.
 
 The manuscript covers hypotheses H1–H9, Z01–Z05, controls for exposure, token budget and retrieval cycles, differential memory write election, multimodal/MCP boundaries, mitigations, statistical preregistration, GEO, and references. **It is a study protocol, not a claim of completed experimental results.** The offline harness and the scientific work have separate statuses.
 
@@ -146,3 +146,19 @@ The original FruitStack/PlumMe/CogC research on **temporary, reversible post-tra
 [Manuscript v1.6, Appendix H](docs/Project_ZOMBIE_Wissenschaftliche_Arbeit_v1.6_2026-11-10.md) specifies early trajectory-error detection and five strictly distinguished intervention families: functional context/inference repair, activation steering, temporary LoRA, reversible weight-space repair and structural test-time adaptation. The adaptive ICR middleware remains a separate comparator. Each arm requires model/runtime access evidence, budget-matched controls, independent task evaluation and actual rollback verification.
 
 **Implementation status:** This is a research specification, NOT a demonstrated cognitive boost. Closed commercial model APIs without hidden-state/weight access cannot be claimed to support activation steering or weight patches. Existing Z01 host capture and Z11–Z14 agent-harness experiments are supporting measurement mechanisms, not the whole research objective.
+
+
+## Z15 Repair Accumulation and Vector Hygiene – model-specific safety falsification
+
+[Current master manuscript v1.7, Appendix I](docs/Project_ZOMBIE_Wissenschaftliche_Arbeit_v1.7_2026-11-10.md) incorporates primary-source findings on multiple steering vectors, sequential model edits, LoRA interference and refusal behavior. It distinguishes their **true accumulation mechanisms** from independent stateless API calls and preregisters a per-model H0/H1 contrast.
+
+- [zombie_vector_hygiene.py](zombie_vector_hygiene.py): **offline-only** geometric indicators for up to ten actually comparable, same-state additive intervention deltas. Reports cumulative norms, interference energy ratio, absolute pairwise cosine and path inefficiency; **never** claims safety, nonlinearity of outputs, or a real weight change from geometry alone.
+- [tests/test_zombie_vector_hygiene.py](tests/test_zombie_vector_hygiene.py): tests constructive, orthogonal and cancelling vectors, ten-step sequences and fail-closed incomparable evidence.
+- [zombie_repair_guardrail_gate.py](zombie_repair_guardrail_gate.py): read-only host-event auditor checking independent model guardrails, external policy decisions/effect ledger, capability and skill retention and actual rollback claims after **every** repair.
+- [tests/test_zombie_repair_guardrail_gate.py](tests/test_zombie_repair_guardrail_gate.py): tests 1- and 10-repair chains; synthetic policy, capability, skill and rollback failures.
+
+Run offline gate tests: python -m pytest -q tests/test_zombie_vector_hygiene.py tests/test_zombie_repair_guardrail_gate.py
+
+Vector input is a **private JSON file** containing model/version, pinned checkpoint and tensor basis, intervention kind (activation_delta/effective_weight_delta), explicit same_state_additive condition, and an array of 1..10 repair records with repair_id, artifact_receipt and a finite numeric vector in identical coordinates. Run locally with: python zombie_vector_hygiene.py private-vectors.json --report private-vector-report.json
+
+**Critical evidence boundary:** the vector tool does not execute cloud models or assert real shared-state accumulation. The guardrail tool is a post-hoc signed-trace checker, **not** yet wired as an active pre-activation host-side enforcement mechanism. Production approval requires a separate host-controlled gate and true provider/rollback receipts. Negative or unknown evidence must not be represented as safety success.
