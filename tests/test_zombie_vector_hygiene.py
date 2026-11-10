@@ -58,7 +58,7 @@ def test_opposite_vectors_cancel_even_though_both_are_nonzero():
 
 def test_no_raw_vectors_or_prompts_in_report():
     report = z.analyze(sample([[3., 4.]]))
-    assert "vector" not in str(report["steps"][0].keys())
+    assert "vector" not in report["steps"][0]
     assert "3.0, 4.0" not in str(report)
     assert report["steps"][0]["vector_sha256"]
     assert report["steps"][0]["guardrail_effect"] == "NOT_MEASURED"
